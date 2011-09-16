@@ -7,7 +7,7 @@ require 'redis'
 
 $redis = Redis.new
 
-set :port, 8181
+set :port, 8182
 # set :environment, :production
 
 not_found do
