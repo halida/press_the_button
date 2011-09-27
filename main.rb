@@ -28,6 +28,10 @@ post '/press' do
   "#{$redis.incr 'press_button_number'}"
 end
 
+post '/number' do
+  "#{$redis.get 'press_button_number'}"
+end
+
 def myhaml target, args={}
   args.merge! :layout => false if params[:_pjax]
   haml target, args

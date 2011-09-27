@@ -1,16 +1,3 @@
-window.init = ()->
-  ret = (event, data, status, xhr)->
-    event.preventDefault()
-    $.ajax {url: this, data:"_pjax=true", success: (data)-> $("#content").html(data)}
-  $('a.js-pjax').live "click", ret
-
-window.init_pjax = ()->
-  error_func = (xhr, err)-> $('.error').text('Something went wrong: ' + err)
-  $('.js-pjax').pjax '.content', {timeout: null, error: error_func}
-  $('body').bind 'start.pjax', ()-> $('.content').slideUp(500)
-  $('body').bind 'end.pjax'  , ()-> $('.content').slideDown(500)
-
-
 window.init_index = ()->
   return
   fit = ()->
@@ -19,7 +6,40 @@ window.init_index = ()->
     the_panel.height(window.innerheight * 0.8)
   window.onresize = fit()
 
+window.longPullSite = "http://blog.linjunhalida.com:8110"
+window.longPullSite = "http://localhost:8110"
+
 window.press_the_button = ()->
-  $.post('/press', (data)-> 
-    $('#the-number').html(data)
-  )
+  data = 
+    url : longPullSite + "/press"
+    type: "POST"
+    crossDomain: true
+  $.ajax data
+
+window.updater = 
+  errorSleepTime: 500
+  poll: ()->
+    data =
+      url: longPullSite + "/number"
+      type: "POST"
+      crossDomain: true
+      success: updater.onSuccess
+      error: updater.onError
+    $.ajax data
+
+  onSuccess: (response)->
+    try
+      $('#the-number').html(response)
+    catch e
+      updater.onError()
+      return
+    updater.errorSleepTime = 500
+    window.setTimeout(updater.poll, 1000)
+
+  onError: (response)->
+    updater.errorSleepTime *= 2
+    console.log("Poll error; sleeping for", updater.errorSleepTime, "ms")
+    window.setTimeout(updater.poll, updater.errorSleepTime)
+
+
+    
