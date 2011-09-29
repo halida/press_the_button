@@ -8,7 +8,7 @@ require 'redis'
 $redis = Redis.new
 
 set :port, 8182
-# set :environment, :production
+set :environment, :production
 
 not_found do
   @title = "404"

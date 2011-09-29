@@ -9,7 +9,7 @@ import tornado
 import tornado.web, tornado.websocket
 
 import redis
-r = redis.Redis()
+r = redis.Redis("127.0.0.1")
 
 
 class ChatRoomWebSocket(tornado.websocket.WebSocketHandler):
@@ -47,15 +47,21 @@ class ChatRoomWebSocket(tornado.websocket.WebSocketHandler):
 
 class ButtonSocket(tornado.websocket.WebSocketHandler):
     connects = []
+    t = time.time()
     
     def open(self):
-        self.write_message(r.get('press_button_number'))
+        self.write_message(str(r.get('press_button_number')))
         self.connects.append(self)
         
     def on_message(self, message):
         # print "on press:", message
-        pressed = r.incr('press_button_number')
-        self.broadcast(str(pressed))
+        pressed = str(r.incr('press_button_number'))
+        self.write_message(pressed)
+
+        now = time.time()
+        if now > self.t + 1:
+            self.t = now
+            self.broadcast(str(pressed))
 
     def broadcast(self, pressed):
         for c in self.connects:
@@ -67,7 +73,10 @@ class ButtonSocket(tornado.websocket.WebSocketHandler):
                 self.connects.remove(c)
             
     def on_close(self):
-        self.connects.remove(self)
+        try:
+            self.connects.remove(self)
+        except:
+            pass
 
 
 settings = {
