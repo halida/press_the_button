@@ -54,8 +54,8 @@ class ButtonSocket(tornado.websocket.WebSocketHandler):
         self.connects.append(self)
         
     def on_message(self, message):
-        # print "on press:", message
-        pressed = str(r.incr('press_button_number'))
+        cmd = r.incr if message == 'up' else r.decr
+        pressed = str(cmd('press_button_number'))
         self.write_message(pressed)
 
         now = time.time()

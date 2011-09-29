@@ -4,6 +4,10 @@ $(function(){init_index();});
 
 
 #the-panel 
-  <a href="#" class="btn primary" id="the-button" onclick="press_the_button()">press me!</a>
-  #the-number= $redis.get 'press_button_number'
+  %p
+    <a href="#" class="btn primary" id="the-button-up" onclick="press_the_button('up')">press me up!</a>
+  %p
+    <a href="#" class="btn danger" id="the-button-down" onclick="press_the_button('down')">press me down!</a>
+  %p
+    #the-number= $redis.get 'press_button_number'
 

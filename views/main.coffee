@@ -1,13 +1,13 @@
 window.init_index = ()->
-  window.ws = new WebSocket "ws://blog.linjunhalida.com:9999/button"
+  window.ws = new WebSocket "ws://localhost:9999/button"
 
   ws.onmessage = (e)->
     $('#the-number').html(e.data)
 
   ws.onclose = ()->
-    alert('connection closed, refresh please..')
+    window.setTimeout(init_index, 1000)
 
 
-window.press_the_button = ()->
-  ws.send("*")
+window.press_the_button = (i)-> ws.send(i)
+
 
