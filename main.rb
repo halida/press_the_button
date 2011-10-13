@@ -4,10 +4,14 @@ require 'haml'
 require 'sass'
 require 'coffee-script'
 require 'redis'
+gem 'subbarao-sinatra-openid'
+require 'sinatra/openid'
+# require 'sinatra/mapping' 
 
 $redis = Redis.new
 
 set :port, 8182
+set :host, "0.0.0.0"
 set :environment, :production
 
 not_found do
